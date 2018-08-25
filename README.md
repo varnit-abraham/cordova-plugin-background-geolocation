@@ -191,6 +191,15 @@ function onDeviceReady() {
     BackgroundGeolocation.configure({ debug: false });
   });
 
+  BackgroundGeolocation.on('abort_requested', function() {
+    console.log('[INFO] Server responded with 285 Updates Not Required');
+
+    // Here we can decide whether we want stop the updates or not.
+    // If you've configured the server to return 285, then it means the server does not require further update.
+    // So the normal thing to do here would be to `BackgroundGeolocation.stop()`.
+    // But you might be counting on it to receive location updates in the UI, so you could just reconfigure and set `url` to null.
+  });
+
   BackgroundGeolocation.checkStatus(function(status) {
     console.log('[INFO] BackgroundGeolocation service is running', status.isRunning);
     console.log('[INFO] BackgroundGeolocation services enabled', status.locationServicesEnabled);
@@ -233,12 +242,13 @@ Configure options:
 | `fastestInterval`         | `Number`          | Android      | Fastest rate in milliseconds at which your app can handle location updates. **@see** [Android  docs](https://developers.google.com/android/reference/com/google/android/gms/location/LocationRequest.html#getFastestInterval()).                                                                                                                   | ACT         | 120000                     | 
 | `activitiesInterval`      | `Number`          | Android      | Rate in milliseconds at which activity recognition occurs. Larger values will result in fewer activity detections while improving battery life.                                                                                                                                                                                                    | ACT         | 10000                      | 
 | `stopOnStillActivity`     | `Boolean`         | Android      | @deprecated stop location updates, when the STILL activity is detected                                                                                                                                                                                                                                                                             | ACT         | true                       | 
-| `startForeground`         | `Boolean`         | Android      | show service notification when in foreground                                                                                                                                                                                                                                                                                                       | all         | false                      |
-| `notificationTitle`       | `String` optional | Android      | Custom notification title in the drawer.                                                                                                                                                                                                                                                                                                           | all         | "Background tracking"      | 
-| `notificationText`        | `String` optional | Android      | Custom notification text in the drawer.                                                                                                                                                                                                                                                                                                            | all         | "ENABLED"                  | 
-| `notificationIconColor`   | `String` optional | Android      | The accent color to use for notification. Eg. **#4CAF50**.                                                                                                                                                                                                                                                                                         | all         |                            | 
-| `notificationIconLarge`   | `String` optional | Android      | The filename of a custom notification icon. **@see** Android quirks.                                                                                                                                                                                                                                                                               | all         |                            | 
-| `notificationIconSmall`   | `String` optional | Android      | The filename of a custom notification icon. **@see** Android quirks.                                                                                                                                                                                                                                                                               | all         |                            | 
+| `notificationsEnabled`    | `Boolean`         | Android      | Enable/disable local notifications when tracking and syncing locations                                                                                                                                                                                                                                                                             | all         | true                       |
+| `startForeground`         | `Boolean`         | Android      | Allow location sync service to run in foreground state. Foreground state also requires a notification to be presented to the user.                                                                                                                                                                                                                 | all         | false                      |
+| `notificationTitle`       | `String` optional | Android      | Custom notification title in the drawer. (goes with `startForeground`)                                                                                                                                                                                                                                                                             | all         | "Background tracking"      | 
+| `notificationText`        | `String` optional | Android      | Custom notification text in the drawer. (goes with `startForeground`)                                                                                                                                                                                                                                                                              | all         | "ENABLED"                  | 
+| `notificationIconColor`   | `String` optional | Android      | The accent color to use for notification. Eg. **#4CAF50**. (goes with `startForeground`)                                                                                                                                                                                                                                                           | all         |                            | 
+| `notificationIconLarge`   | `String` optional | Android      | The filename of a custom notification icon. **@see** Android quirks. (goes with `startForeground`)                                                                                                                                                                                                                                                 | all         |                            | 
+| `notificationIconSmall`   | `String` optional | Android      | The filename of a custom notification icon. **@see** Android quirks. (goes with `startForeground`)                                                                                                                                                                                                                                                 | all         |                            | 
 | `activityType`            | `String`          | iOS          | [AutomotiveNavigation, OtherNavigation, Fitness, Other] Presumably, this affects iOS GPS algorithm. **@see** [Apple docs](https://developer.apple.com/library/ios/documentation/CoreLocation/Reference/CLLocationManager_Class/CLLocationManager/CLLocationManager.html#//apple_ref/occ/instp/CLLocationManager/activityType) for more information | all         | "OtherNavigation"          | 
 | `pauseLocationUpdates`    | `Boolean`         | iOS          | Pauses location updates when app is paused. **@see* [Apple docs](https://developer.apple.com/documentation/corelocation/cllocationmanager/1620553-pauseslocationupdatesautomatical?language=objc)                                                                                                                                                  | all         | false                      | 
 | `saveBatteryOnBackground` | `Boolean`         | iOS          | Switch to less accurate significant changes and region monitory when in background                                                                                                                                                                                                                                                                 | all         | false                      | 
@@ -443,17 +453,18 @@ Unregister all event listeners for given event
 
 ## Events
 
-| Name                | Callback param         | Platform     | Provider*   | Description                            |
-|---------------------|------------------------|--------------|-------------|----------------------------------------|
-| `location`          | `Location`             | all          | all         | on location update                     |
-| `stationary`        | `Location`             | all          | DIS,ACT     | on device entered stationary mode      |
-| `activity`          | `Activity`             | Android      | ACT         | on activity detection                  |
-| `error`             | `{ code, message }`    | all          | all         | on plugin error                        |
-| `authorization`     | `status`               | all          | all         | on user toggle location service        |
-| `start`             |                        | all          | all         | geolocation has been started           |
-| `stop`              |                        | all          | all         | geolocation has been stopped           |
-| `foreground`        |                        | Android      | all         | app entered foreground state (visible) |
-| `background`        |                        | Android      | all         | app entered background state           |
+| Name                | Callback param         | Platform     | Provider*   | Description                                      |
+|---------------------|------------------------|--------------|-------------|--------------------------------------------------|
+| `location`          | `Location`             | all          | all         | on location update                               |
+| `stationary`        | `Location`             | all          | DIS,ACT     | on device entered stationary mode                |
+| `activity`          | `Activity`             | Android      | ACT         | on activity detection                            |
+| `error`             | `{ code, message }`    | all          | all         | on plugin error                                  |
+| `authorization`     | `status`               | all          | all         | on user toggle location service                  |
+| `start`             |                        | all          | all         | geolocation has been started                     |
+| `stop`              |                        | all          | all         | geolocation has been stopped                     |
+| `foreground`        |                        | Android      | all         | app entered foreground state (visible)           |
+| `background`        |                        | Android      | all         | app entered background state                     |
+| `abort_requested`   |                        | all          | all         | server responded with "285 Updates Not Required" |
 
 ### Location event
 | Location parameter     | Type      | Description                                                            |
