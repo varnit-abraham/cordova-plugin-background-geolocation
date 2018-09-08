@@ -3,4 +3,4 @@
 	url = https://github.com/mauron85/background-geolocation-ios.git
 [submodule "android-common"]
 	path = android/common
-	url = https://github.com/varnit-abraham/background-geolocation-android.git#feature-fused-location-separate
+	url = https://github.com/varnit-abraham/background-geolocation-android.git
