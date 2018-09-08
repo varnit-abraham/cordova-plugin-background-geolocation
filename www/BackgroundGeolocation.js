@@ -37,9 +37,13 @@ var BackgroundGeolocation = {
     'abort_requested'
   ],
 
+  DEFAULT_MODE : 1,
+  FUSED_MODE: 2,
+
   DISTANCE_FILTER_PROVIDER: 0,
   ACTIVITY_PROVIDER: 1,
   RAW_PROVIDER: 2,
+  FUSE_PROVIDER: 3,
 
   BACKGROUND_MODE: 0,
   FOREGROUND_MODE: 1,
