@@ -111,6 +111,7 @@
         <source-file src="android/common/src/main/java/ru/andremoniy/utils/TextUtils.java" target-dir="src/ru/andremoniy/utils" />
         <source-file src="android/common/src/oreo/java/com/marianhello/bgloc/NotificationHelper.java" target-dir="src/com/marianhello/bgloc" />
         <source-file src="android/common/src/oreo/java/com/marianhello/bgloc/sync/SyncAdapter.java" target-dir="src/com/marianhello/bgloc/sync" />
+        <source-file src="android/common/src/oreo/java/com/marianhello/bgloc/FusedLocationProviderImpl.java" target-dir="src/com/marianhello/bgloc" />
         <source-file src="android/common/src/main/java/com/varnitabraham/bgloc/FusedLocationBgService.java" target-dir="src/com/varnitabraham/bgloc" />
         <source-file src="android/common/src/main/java/com/varnitabraham/bgloc/LocationUpdatesBroadcastReceiver.java" target-dir="src/com/varnitabraham/bgloc" />
         <source-file src="android/common/src/main/java/com/varnitabraham/bgloc/FusedLocationProvider.java" target-dir="src/com/varnitabraham/bgloc" />
